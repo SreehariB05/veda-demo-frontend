@@ -2,6 +2,7 @@
 
 import DashSidebar from "../components/dash-sidebar";
 import React, { useState, useMemo } from "react";
+import ViewDocument from "../components/view-document";
 import Link from "next/link";
 
 const initialDocuments = [
@@ -54,7 +55,7 @@ export default function DocumentDetails() {
             docs = [...docs].sort((a, b) => {
                 const aVal = String(a[sort.column as keyof typeof a]);
                 const bVal = String(b[sort.column as keyof typeof b]);
-                
+
                 if (aVal < bVal) return sort.direction === 'asc' ? -1 : 1;
                 if (aVal > bVal) return sort.direction === 'asc' ? 1 : -1;
                 return 0;
@@ -217,8 +218,12 @@ function TableRow({ docType, docName, category, size, expiry, status, statusColo
                     {status}
                 </span>
             </td>
+            {/*onClick={(docName, category) => ViewDocument()}*/}
             <td className="py-5 text-indigo-600 text-xs font-semibold hover:underline cursor-pointer">
-                View
+                {/*?fileName=${docName}&category=${category}*/}
+                <Link href={".../components/view-document"}>
+                    View & Share
+                </Link>
             </td>
         </tr>
     );
