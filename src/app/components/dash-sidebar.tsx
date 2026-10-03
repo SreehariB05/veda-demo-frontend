@@ -1,7 +1,29 @@
+"use client";
+
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/context/auth-context";
+import { LogoutIcon } from "@/lib/icons";
 
 export default function DashSidebar({ page }: { page: string }) {
+    const router = useRouter();
+    const { logout } = useAuth();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    const handleLogout = async () => {
+        if (isLoggingOut) return;
+        setIsLoggingOut(true);
+        try {
+            await logout();
+            router.push("/login");
+        } catch {
+            router.push("/login");
+        } finally {
+            setIsLoggingOut(false);
+        }
+    };
+
     return (
         <aside className="w-64 bg-white border-r border-gray-100 flex flex-col min-h-[calc(100vh-73px)] shrink-0">
             <nav className="flex-1 px-4 py-6 space-y-1">
@@ -13,10 +35,23 @@ export default function DashSidebar({ page }: { page: string }) {
                 <SidebarItem href="/profile-analytics" icon={<ChartIcon />} label="Analytics" active={page === "profile-analytics"} />
                 <SidebarItem href="/profile" icon={<UserIcon />} label="Profile" active={page === "profile"} />
                 <SidebarItem href="/settings" icon={<SettingsIcon />} label="Settings" active={page === "settings"} />
+
+                <button
+                    type="button"
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-gray-500 hover:bg-rose-50 hover:text-rose-600 font-medium group text-left disabled:opacity-50"
+                >
+                    <div className="w-5 h-5 text-gray-400 group-hover:text-rose-600 transition-colors">
+                        <LogoutIcon />
+                    </div>
+                    <span className="text-sm">{isLoggingOut ? "Logging out…" : "Logout"}</span>
+                </button>
             </nav>
         </aside>
     );
 }
+
 
 function SidebarItem({ href, icon, label, active }: { href: string; icon: React.ReactNode; label: string; active?: boolean }) {
     return (
